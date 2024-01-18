@@ -7,12 +7,11 @@ import com.example.countrylist.data.Results
 import com.example.countrylist.data.entity.CountryListResponse
 import com.example.countrylist.databinding.CountryListRowBinding
 
-class CountryListAdapter : RecyclerView.Adapter<CountryListAdapter.CountryViewHolder>() {
+class CountryListAdapter(private var countryList: Results<List<CountryListResponse>>) :
+    RecyclerView.Adapter<CountryListAdapter.CountryViewHolder>() {
 
-    private var countryList: Results<List<CountryListResponse>> = Results.Loading()
-    fun submitCountryList(newCountryList: Results<List<CountryListResponse>>) {
+    fun setCountryList(newCountryList: Results<List<CountryListResponse>>) {
         countryList = newCountryList
-        notifyDataSetChanged()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CountryViewHolder {
@@ -25,18 +24,12 @@ class CountryListAdapter : RecyclerView.Adapter<CountryListAdapter.CountryViewHo
     }
 
     override fun onBindViewHolder(holder: CountryViewHolder, position: Int) {
-        when (countryList) {
-            is Results.Success -> {
-                val country = countryList.data?.get(position)
-                holder.bind(country)
-            }
-
-            is Results.Error -> {}
-            is Results.Loading -> {}
-        }
+        val country = countryList.data?.get(position)
+        holder.bind(country)
     }
 
     override fun getItemCount(): Int = countryList.data?.size ?: 0
+
     inner class CountryViewHolder(private val binding: CountryListRowBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(country: CountryListResponse?) {
